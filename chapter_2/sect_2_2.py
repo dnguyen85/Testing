@@ -171,6 +171,56 @@ def merge_queue(q1, q2):
 # merge first two sub queue in the large queue and enqueue the result util
 # there is only one sub queue.
 def bu_merge_sort_q(lst):
+    """
+    >>> bu_merge_sort_q([3, 2, 4, 7, 8, 9, 1, 0])
+    [0, 1, 2, 3, 4, 7, 8, 9]
+    >>> test_lst = [i for i in range(10)]
+    >>> random.shuffle(test_lst)
+    >>> bu_merge_sort_q(test_lst)
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    """
+    if not lst or len(lst) < 2:
+        return lst
+
+    merged = collections.deque()
+    for elem in lst: 
+        merged.append([elem])
+
+    while len(merged) >= 2:
+        left = merged.popleft()
+        right = merged.popleft()
+        merged.append(merge_queue(left, right))
+
+    return list(merged[0])
+
+def merge_linked_list(headA, headB):
+    """
+    Merge 2 sorted linked lists
+    """
+    # Dummy node to start comparing at head
+    dummy = ListNode(0)
+    node = dummy
+    nodeA, nodeB = headA, headB 
+
+    while nodeA or nodeB:
+        if not nodeA:
+            node.next = nodeB
+            break
+        elif not nodeB:
+            node.next = nodeA
+            break
+        elif nodeA.val <= nodeB.val:
+            node.next = nodeA
+            nodeA = nodeA.next
+        else:
+            node.next = nodeB
+            nodeB = nodeB.next
+
+    return dummy.next
+
+
+
+    # both lists are valid
 
 
 
