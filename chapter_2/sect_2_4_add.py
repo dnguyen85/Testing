@@ -140,9 +140,21 @@ class IndexMinPQ(object):
             return
 
         self._keys[k] = elem
-        # Reheapify
+        # Reheapify kth element priority
         self.swim(self._qp[k])
         self.sink(self._qp[k])
+
+    def min_index(self):
+        """
+        Return the fast-access index of minimum element
+        """
+        return None if self._N == 0 else self._pq[1]
+
+    def min_key(self):
+        """
+        Return the minium element
+        """
+        return None if self._N == 0 else self._keys[self._pq[1]]
 
 
 if __name__ == '__main__':
