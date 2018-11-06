@@ -144,6 +144,53 @@ class IndexMinPQ(object):
         self.swim(self._qp[k])
         self.sink(self._qp[k])
 
+def heap_sort(arr):
+    """
+    Assume a 1-based array for sorting
+    Heap-sort implementation, using priority queue sink() method as util function,
+    first build the maximum priority queue, and exchange list[0] and lst[size], then size minus one,
+    and sink the list[0] again, util size equals zero.
+    >>> lst = []
+    >>> lst = [i for i in range(10)]
+    >>> random.shuffle(lst)
+    >>> heap_sort(lst)
+    >>> lst
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    """ 
+    def sink(arr, idx, N):
+        """
+        sink() helper method to restore the heap invariant for element @ idx 
+        """
+        while 2 * idx <= N:
+            left_child, right_child = 2 * idx, 2 * idx + 1
+            swapped_child = left_child
+            if 2 * idx < N and arr[left_child] < arr[right_child]:
+                swapped_child = right_child
 
+            # check if we're done
+            if arr[swapped_child] <= arr[idx]:
+                break
+
+            # If not, keep sinking
+            arr[idx], arr[swapped_child] = arr[swapped_child], arr[idx]
+            idx = swapped_child
+
+    # Method implementation 
+    _N = len(arr)
+
+    # first build a MaxPQ heap for arr[1..N]
+    for i in range(_N // 2, 0, -1):
+        # Sink the top half of the array inductively
+        sink(arr, i, _N)
+
+    # Sort down 
+    while _N > 1:
+        # Swap max elem w/ last elem
+        arr[1], arr[_N] = arr[_N], arr[1]
+        # Reduce PQ size:
+        _N -= 1
+        # Reheapify
+        sink(arr, 1, _N)
+    
 if __name__ == '__main__':
     doctest.testmod()

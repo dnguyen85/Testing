@@ -130,6 +130,41 @@ class MergeSortBU(object):
                 lst[k] = aux[i]
                 i += 1
 
+class MergeSort_LinkedList(object):
+    """
+    Top-bottom merge-sort implementation for linked lists. 
+    This is on O(n logn) time and O(1) space implementation
+    """
+    def sort(self, head):
+        """
+        Actual API to do sorting of linked list
+        """
+        if not head or not head.next:
+            return head
+
+        # Split list in half
+        midde = self.get_middle(head)    # Find middle node 
+        sec_half = middle.next 
+        middle.next = None 
+
+        # Recursively sort both halves
+        sorted_1st_half = self.sort(head)
+        sorted_2nd_half = self.sort(sec_half)
+        return self.merge_linked_list(sorted_1st_half, sorted_2nd_half)
+
+    def merge_linked_list(self, headA, headB):
+        """
+        Merge 2 sorted linked lists
+        """
+        # Dummy node to start comparing at head
+        ...
+
+    def get_middle(self, head):
+        """
+        Get the middle node in a 2+ element linked list
+        """
+        ...
+
 # 2.2.14 practice merge 2 sorted queues
 def merge_queue(q1, q2):
     """
