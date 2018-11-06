@@ -140,9 +140,15 @@ class IndexMinPQ(object):
             return
 
         self._keys[k] = elem
-        # Reheapify
+        # Reheapify kth element priority
         self.swim(self._qp[k])
         self.sink(self._qp[k])
+
+    def min_key(self):
+        """
+        Return the minium element
+        """
+        return None if self._N == 0 else self._keys[self._pq[1]]
 
 def heap_sort(arr):
     """
@@ -166,10 +172,6 @@ def heap_sort(arr):
             swapped_child = left_child
             if 2 * idx < N and arr[left_child] < arr[right_child]:
                 swapped_child = right_child
-
-            # check if we're done
-            if arr[swapped_child] <= arr[idx]:
-                break
 
             # If not, keep sinking
             arr[idx], arr[swapped_child] = arr[swapped_child], arr[idx]
