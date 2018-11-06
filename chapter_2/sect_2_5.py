@@ -34,7 +34,7 @@ def knuth_shuffle_backward(arr):
         j = random.randint(0, i)           # Pick randomly 0 <= j <= i     
         arr[j], arr[i] = arr[i], arr[j]    # exchange     
 
-def knuth_shuffle_foward(arr):
+def knuth_shuffle_forward(arr):
     """
     Shuffle an array in place, from beginning to end
     """
@@ -67,6 +67,18 @@ def kendall_tau_brute_force(ranking1, ranking2):
             distance += 1
 
     return distance
+
+class CountInversions(object):
+    """
+    Count the number of inversions in an array
+    """
+    def count_inversions_bisect(lstA, lstB):
+        sum = 0
+        for elemB in lstB:
+            insertion_point = bisect.bisect_left(lstA, elemB)
+            sum += len(lstA) - insertion_point
+
+        return sum
 
 if __name__ == '__main__':
     doctest.testmod()
