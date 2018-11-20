@@ -72,13 +72,62 @@ class CountInversions(object):
     """
     Count the number of inversions in an array
     """
-    def count_inversions_bisect(lstA, lstB):
+    def count_inversions_bisect(self, lstA, lstB):
         sum = 0
         for elemB in lstB:
             insertion_point = bisect.bisect_left(lstA, elemB)
             sum += len(lstA) - insertion_point
 
         return sum
+
+    def merge_and_count_inversions(self, aux, lst, low, mid, high):
+        """
+        Merge lst[low..mid] and lst[mid+1..high], using aux[low..high] as auxiliary storage
+            - precondition: a[low..mid] and a[mid+1..high] are sorted arrays
+        """
+        # Copy lst to aux
+        for k in range(low, high+1):
+            aux[k] = lst[k]
+
+        # Merge aux[lo..mid] and aux[mid+1..high] back into lst[low..high]
+        # 2 pointers i and j used to advance across 2 sub-lists
+        inversion_cnt = 0
+        i, j = low, mid+1
+
+        for k in range(low, high+1):
+            if i > mid: # left sequence exhausted, take right & no inversion
+                lst[k] = aux[j]
+                j += 1
+            elif j > high: # right sequence exhausted, take left & all inversions had been counted
+                lst[k] = aux[i]
+                i += 1
+            elif aux[i] <= aux[j]: # take left & no inversion
+                lst[k] = aux[i]
+                i += 1
+            else: # take right & b_j is inverted w/ every elems left in A
+                lst[k] = aux[j]
+                j += 1
+                inversion_cnt += (mid - i + 1)
+
+        return inversion_cnt
+
+    def __count_inversion_helper(self, aux, lst, low, high):
+        if high <= low:
+            return 0
+
+        mid = (low + high) // 2
+        left_count = self.__count_inversion_helper(aux, lst, low, mid)
+        right_count = self.__count_inversion_helper(aux, lst, mid+1, high)
+        merge_count = merge_and_count_inversion(aux, lst, low, mid, high)
+        return left_count + right_count + merge_count
+
+    def count_inversions(self, lst):
+        aux = list(lst)
+        return self.__count_inversion_helper(aux, lst, 0, len(lst)-1)
+
+
+
+                
 
 if __name__ == '__main__':
     doctest.testmod()
