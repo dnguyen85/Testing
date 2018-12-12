@@ -306,14 +306,71 @@ class BST(object):
     # 3.2.14 practice
     def select(self, k):
         """Find the kth node of the BST"""
+        num_lt = k-1
+        node = self._root
+
+        while node:
+            if self.node_size(node.left) == num_lt:
+                num_lt = 0
+                break
+            elif self.node_size(node.left) > num_lt:
+                node = node.left
+            else:
+                num_lt = num_lt - self.node_size(node.left) - 1
+                node = node.right
+
+        if num_lt > 0:
+            return None
+        else:
+            return node
 
     # 3.2.14 practice:
     def rank(self, key):
         """Find the rank of the node in BST by the given key"""
+        return self._rank(self._root, key)
+
+    def _rank(self, node, key):
+        if not node:                            # Base case
+            return 0
+
+        if node.val == key:                     # Done recursing
+            return self.node_size(node.left)
+        elif node.val > key:                    # Recurse left
+            return self._rank(node.left, key)
+        else:                                   # Recurse right
+            return self.node_size(node.left) + 1 + self._rank(node.right, key)
 
 
+    def rank_iterative(self, key):
+        """
+        Iterative implementation of rank
+        """
+        result = 0
+        node = self._root 
 
+        while node:
+            if node.val == key:
+                result += self.node_size(node.left)
+                break
+            elif node.val > key:    # Go left
+                node = node.left
+            else:           # Go right
+                result =+ self.node_size(node.left) + 1
+                node = node.right
 
+        return result
+
+    def delete_min(self):
+        """Find the minimum key and delete it"""
+
+    def delete_max(self):
+        """Find the maximum key and delete it"""
+
+    def delete(self, key):
+        """Delete corresponding key from table"""
+
+    def keys(self):
+        """Return an iterable of all keys"""
 
 
 if __name__ == '__main__':
