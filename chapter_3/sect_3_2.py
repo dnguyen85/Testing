@@ -2,6 +2,7 @@
 # -*- encoding:UTF-8 -*-
 import doctest
 import random
+import collections
 
 class TreeNode(object):
     def __init__(self, key, val, size):
@@ -277,6 +278,30 @@ class BST(object):
         else:   # Propage min_val
             return min(self._min_val(node.left, min_val), self._min_val(node.right, min_val))
 
+    def min_node(self):
+        """Returns the min node in the BST"""
+        return self._min_node(self._root)
+
+    def _min_node(self, node):
+        if not node:
+            return None
+
+        # Traverse of left-most leave node
+        while node.left:
+            node = node.left
+
+        return node
+
+    def max_node(self):
+        return self._max_node(self._root)
+
+    def _max_node(self, node):
+        if not node:
+            return None
+
+        while node.right:
+            node = node.right
+        return node
 
     def max_key(self):
         """Find the max key in the BST"""
@@ -362,15 +387,129 @@ class BST(object):
 
     def delete_min(self):
         """Find the minimum key and delete it"""
+        if not self._root:
+            return 
+
+        # Start deleting at root
+        self._root = self._delete_min(self._root)
+
+    def _delete_min(self, node):
+        """Helper routine for recursive impl"""
+        # Base case (looking forward) - I'm the min-key node
+        if not node.left:
+            return node.right
+
+        node.left = self._delete_min(node.left) # Recurse
+        node.size = self.node_size(node.left) + self.node_size(node.right) + 1
+        return node
 
     def delete_max(self):
         """Find the maximum key and delete it"""
+        if not self._root:
+            return
 
-    def delete(self, key):
-        """Delete corresponding key from table"""
+        # Start deleting at root
+        self._root = self._delete_max(self._root)
+
+    def _delete_max(self):
+        # Base case (looking forward) - I'm the max-key node
+        if not node.right:
+            return node.left
+
+        node.right = self._delete_max(node.right)
+        node.size = self.node_size(node.left) + self.node_size(node.right) + 1
+
+    def delete(self, k):
+        """Delete corresponding key k from table"""
+        self._root = self._delete(self._root, k)
+
+    def _delete(self, node, k):
+        """Helper routine to do recursion"""
+        if not node:
+            return None
+
+        if node.key > k:
+            # Recurse and update left subtree
+            node.left = self._delete(node.left, k)
+        elif node.key < k:
+            # Recurse and update right subtree
+            node.right = self._delete(node.right, k)
+        else:
+            # Replace this node by its successor in linear order
+            if not node.left or not node.right:
+                return (node.left or node.right)
+            tmp = node
+            node = self._min_node(tmp.right)
+            node.right = self._delete_min(tmp.right) 
+            node.left = tmp.left
+
+        # Update size
+        node.size = self.size_of(node.left) + self.size_of(node.right) + 1
+        return node
 
     def keys(self):
-        """Return an iterable of all keys"""
+        """Return an iterable of all nodes on the BST"""
+        return self.keys(self.min_node().key, self.max_node().key)
+
+    def keys(self, lo, hi):
+        """Returns an iterable of all nodes on BST with between lo and hi""" 
+        queue = collections.deque()
+        # Starting at root, traverse all nodes on BST and collect in queue
+        self._keys(self._root, queue, lo, hi)
+
+    def _keys(self, node, queue, lo, hi):
+        """In-order traversal to add nodes to queue"""
+        if not node:
+            return
+
+        # Traverse left sub-tree if needed to collect nodes in queue
+        if lo < node.key:       
+            self._keys(node.left, queue, lo, hi) 
+
+        # This node
+        if lo <= node.key and node.key <= hi:
+            queue.append(node)
+
+        # Traverse right sub-tree if needed
+        if node.key < hi:
+            self._keys(node.right, queue, lo, hi)
+
+    def level_order():
+        """Returns the keys in BST in level order"""
+        if not self._root:
+            return None
+
+        iter_queue = collections.deque()
+        keys = collections.deque()
+        iter_queue.append(self._root)
+
+        while not iter_queue: # queue is not empty
+            # Get current node
+            node = iter_queue.pop_left()
+            # Process node
+            keys.append(node)
+            # Check left and right
+            if node.left:
+                iter_queue.append(node.left)
+            elif node.right:
+                iter_queue.append(node.right)
+
+        return keys
+
+    # 3.2.6 practice: add height function for BST
+    def height(self):
+        """Returns the height of the BST"""
+        return self._height(self._root)
+
+    def _height(self, node):
+        if not node: # Null node has height -1
+            return -1
+
+        # Recurse left and right subtree, then compute height for this node
+        return 1 + max(self._height(node.left), self._height(node.right))
+
+        
+        
 
 
 if __name__ == '__main__':
